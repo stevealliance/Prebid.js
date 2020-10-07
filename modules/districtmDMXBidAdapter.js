@@ -158,10 +158,10 @@ export const spec = {
           linearity: dmx.mediaTypes.video.linearity || 1,
           minduration: dmx.mediaTypes.video.minduration || 5,
           maxduration: dmx.mediaTypes.video.maxduration || 60,
-          playbackmethod: getPlaybackmethod(dmx.mediaTypes.video.playback_method),
-          api: getApi(dmx.mediaTypes.video),
+          playbackmethod: dmx.mediaTypes.video.playbackmethod || [2],
+          api: dmx.mediaTypes.video.api || [2],
           mimes: dmx.mediaTypes.video.mimes || ['video/mp4'],
-          protocols: getProtocols(dmx.mediaTypes.video),
+          protocols: dmx.mediaTypes.video.protocols || [2, 3, 5, 6, 7, 8],
           w: dmx.mediaTypes.video.playerSize[0][0],
           h: dmx.mediaTypes.video.playerSize[0][1],
           format: dmx.mediaTypes.video.playerSize.map(s => {
