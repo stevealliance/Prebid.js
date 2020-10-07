@@ -154,15 +154,14 @@ export const spec = {
       if (dmx.mediaTypes && dmx.mediaTypes.video) {
         obj.video = {
           topframe: 1,
-          skip: dmx.mediaTypes.video.skippable || 0,
+          skip: dmx.mediaTypes.video.skip || 0,
           linearity: dmx.mediaTypes.video.linearity || 1,
           minduration: dmx.mediaTypes.video.minduration || 5,
           maxduration: dmx.mediaTypes.video.maxduration || 60,
           playbackmethod: dmx.mediaTypes.video.playbackmethod || [2],
-          api: dmx.mediaTypes.video.api || [2],
+          api: getApi(dmx.mediaTypes.video),
           mimes: dmx.mediaTypes.video.mimes || ['video/mp4'],
-          protocols: dmx.mediaTypes.video.protocols || [2, 3, 5, 6, 7, 8],
-          w: dmx.mediaTypes.video.playerSize[0][0],
+          protocols: getProtocols(dmx.mediaTypes.video),
           h: dmx.mediaTypes.video.playerSize[0][1],
           format: dmx.mediaTypes.video.playerSize.map(s => {
             return {w: s[0], h: s[1]};
@@ -380,20 +379,10 @@ export function bindUserId(eids, value, source, atype) {
   }
 }
 
-export function getApi({protocols}) {
+export function getApi({api}) {
   let defaultValue = [2];
-  let listProtocols = [
-    {key: 'VPAID_1_0', value: 1},
-    {key: 'VPAID_2_0', value: 2},
-    {key: 'MRAID_1', value: 3},
-    {key: 'ORMMA', value: 4},
-    {key: 'MRAID_2', value: 5},
-    {key: 'MRAID_3', value: 6},
-  ];
-  if (protocols) {
-    return listProtocols.filter(p => {
-      return protocols.indexOf(p.key) !== -1;
-    }).map(p => p.value)
+  if (api && Array.isArray(api) && api.length > 0) {
+    return api
   } else {
     return defaultValue;
   }
@@ -409,20 +398,8 @@ export function getPlaybackmethod(playback) {
 
 export function getProtocols({protocols}) {
   let defaultValue = [2, 3, 5, 6, 7, 8];
-  let listProtocols = [
-    {key: 'VAST_1_0', value: 1},
-    {key: 'VAST_2_0', value: 2},
-    {key: 'VAST_3_0', value: 3},
-    {key: 'VAST_1_0_WRAPPER', value: 4},
-    {key: 'VAST_2_0_WRAPPER', value: 5},
-    {key: 'VAST_3_0_WRAPPER', value: 6},
-    {key: 'VAST_4_0', value: 7},
-    {key: 'VAST_4_0_WRAPPER', value: 8}
-  ];
-  if (protocols) {
-    return listProtocols.filter(p => {
-      return protocols.indexOf(p.key) !== -1
-    }).map(p => p.value);
+  if (protocols && Array.isArray(protocols) && protocols.length > 0) {
+   return protocols;
   } else {
     return defaultValue;
   }
