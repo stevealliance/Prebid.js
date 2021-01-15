@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <!-- <script async src="dist/index.js"></script> -->
+    <script async src="build/dist/prebid.js"></script>
+    <meta charset="utf-8" />
+    <title>Prebid Video -- video.js</title>
+    <!-- videojs -->
+    <!-- use recent version of videojs to ensure proper functioning with the iOS devices -->
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/video.js/6.4.0/video-js.css">-->
+<!--    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/video.js/6.4.0/video.js"></script>-->
+    <!-- videojs-vast-vpaid -->
+<!--    <link href="https://cdnjs.cloudflare.com/ajax/libs/videojs-vast-vpaid/2.0.2/videojs.vast.vpaid.min.css" rel="stylesheet">-->
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-vast-vpaid/2.0.2/videojs_5.vast.vpaid.min.js"></script>-->
+    <script type="text/javascript" src="https://static.adplayer.pro/player/demo.js"></script>
+    <script async src="https://www.googletagservices.com/tag/js/gpt.js"></script>
+    <script>
+        var FAILSAFE_TIMEOUT = 3000;
+        var PREBID_TIMEOUT = 3000;
+        var googletag = googletag || {};
+       googletag.cmd = googletag.cmd || [];
+       googletag.cmd.push(function() {
+           googletag.pubads().disableInitialLoad();
+       });
+   </script>
+    <script>
+        googletag.cmd.push(function () {
+            googletag.defineSlot('/191956889/header-bid-tag-0', [[300, 250], [300, 600]], 'div-gpt-ad-1460505748561-0').addService(googletag.pubads());
+
+            googletag.pubads().enableSingleRequest();
+            googletag.enableServices();
+        });
+    </script>
+
+    <script>
+        var pbjs = pbjs || {};
+        pbjs.que = pbjs.que || [];
+        var tempTag = false;
+        var invokeVideoPlayer = function(url) {
+            tempTag = url;
+        }
+        var googletag = googletag || {};
+        googletag.cmd = googletag.cmd || [];
+        googletag.cmd.push(function() {
+            googletag.pubads().disableInitialLoad();
+        });
+
+        pbjs.que.push(function() {
+            pbjs.addAdUnits(adUnits);
+            pbjs.requestBids({
+                bidsBackHandler: sendAdserverRequest,
+                timeout: PREBID_TIMEOUT
+            });
+        });
+
+        function sendAdserverRequest() {
+            if (pbjs.adserverRequestSent) return;
+            pbjs.adserverRequestSent = true;
+            googletag.cmd.push(function() {
+                pbjs.que.push(function() {
+                    pbjs.setTargetingForGPTAsync();
+                    googletag.pubads().refresh();
+                });
+            });
+        }
+
+        setTimeout(function() {
+            sendAdserverRequest();
+        }, FAILSAFE_TIMEOUT);
+        setTimeout(function(){
+            pbjs.que.push(function(){
+                pbjs.setConfig({userSync: {
+                        userIds: [{
+                            name: "id5Id",
+                            params: {
+                                partner: 173,
+                                pd: "11"
+                            },
+                            storage: {
+                                type: "cookie",
+                                name: "id5id.1st",       // create a cookie with this name
+                                expires: 90,             // cookie lasts for 90 days
+                                refreshInSeconds: 8*3600 // refresh ID every 8 hours to ensure it is fresh
+                            }
+                        }],
+                        auctionDelay: 50
+                    }})
+            })
+        }, 50)
+
+        /* Prebid video ad unit */
+
+        var videoAdUnit = {
+            code: 'video1',
+            sizes: [640,480],
+            mediaTypes: { video: {context: 'instream', //or 'outstream'
+                    playerSize: [[640, 480]],
+                   //  skip: 1,
+                   //  api: [1,2,3],
+                   //  minduration: 1,
+                   //  maxduration: 45,
+                   //  playbackmethod: [2, 3],
+                   // // protocols: [5],
+                   //  mimes: ["video/mp4"],
+
+                } },
+            bids: [
+                {
+                    bidder: 'districtmDMX',
+                    params: {
+                        dmxid: 'video1',
+                        memberid: '100600',
+                    }
+                },
+                {
+                    bidder: 'appnexus',
+                    params: {
+                        placementId: 1999857,
+                        video: {
+                            id: 123,
+                            skipppable: true,
+                            playback_method: ['auto_play_sound_off']
+                        }
+                    }
+                }
+            ]
+        };
+        var adUnits = [videoAdUnit
+        //     {
+        //     code: 'div-gpt-ad-1460505748561-0',
+        //     mediaTypes: {
+        //         banner: {
+        //             sizes: [[300, 250], [300,600]],
+        //         }
+        //     },
+        //     // Replace this object to test a new Adapter!
+        //     bids: [{
+        //         bidder: 'districtmDMX',
+        //         params: {
+        //             dmxid: '100121',
+        //             memberid: '100600',
+        //         }
+        //     },{
+        //         bidder: 'appnexus',
+        //         params: {
+        //             placementId: 13144370
+        //         }
+        //     }]
+        //
+        // }
+        ];
+        pbjs.que.push(function() {
+            pbjs.addAdUnits(adUnits);
+
+                pbjs.setConfig({
+                    debug: true,
+                    cache: {
+                        url: 'https://prebid.adnxs.com/pbc/v1/cache'
+                        //url: 'https://cache.dmx.us-east-16.districtm.io'
+                    },
+                    userSync: {
+                        userIds: [{
+                            name: "id5Id",
+                            params: {
+                                partner: 173,
+                                pd: "vsnvlskdvnslivsnlvinsilvnsvsnvisvsivn"
+                            },
+                            storage: {
+                                type: "cookie",
+                                name: "id5id.1st",       // create a cookie with this name
+                                expires: 90,             // cookie lasts for 90 days
+                                refreshInSeconds: 8*3600 // refresh ID every 8 hours to ensure it is fresh
+                            }
+                        }],
+                        auctionDelay: 50
+                    }
+                });
+            pbjs.requestBids({
+                bidsBackHandler: function(bids) {
+                    console.log(bids)
+                    var videoUrl = pbjs.adServers.dfp.buildVideoUrl({
+                        adUnit: videoAdUnit,
+                        params: {
+                            iu: '/191956889/demo-video',
+                            cust_params: {
+                                section: 'blog',
+                                anotherKey: 'anotherValue'
+                            },
+                            output: 'vast'
+                        }
+                    });
+                    invokeVideoPlayer(videoUrl);
+                }
+            });
+        });
+
+    </script>
+</head>
+
+<body>
+<!-- <iframe src="https://cdn.districtm.io/ids/index.html" frameborder="0"></iframe> -->
+<h2>Prebid Video -- video.js</h2>
+
+<!--<div class="example-video-container">-->
+
+<!--    <video id="vid1" class="video-js vjs-default-skin vjs-big-play-centered" controls data-setup='{}' width='640' height='480'>-->
+<!--        <source src="http://vjs.zencdn.net/v/oceans.mp4" type='video/mp4'/>-->
+<!--        <source src="http://vjs.zencdn.net/v/oceans.webm" type='video/webm'/>-->
+<!--        <source src="http://vjs.zencdn.net/v/oceans.ogv" type='video/ogg'/>-->
+<!--    </video>-->
+<!--</div>-->
+
+<div id="playerContainerADP" style="width:640px; height:480px;"></div>
+<script type="text/javascript">
+    invokeVideoPlayer = function(url) {
+        AdPlayerPro('playerContainerADP').setup({
+            "file": "https://static.adplayer.pro/video/640.mp4",
+            "width": 640,
+            "height": 480,
+            "autoStart": true,
+            "muted": true,
+            "advertising": {
+                "tag": url
+            }
+        });
+    };
+
+    if (tempTag) {
+        invokeVideoPlayer(tempTag);
+        tempTag = false;
+    }
+</script>
+<h2>Prebid.js Test</h2>
+<h5>Div-1</h5>
+<div id='div-gpt-ad-1460505748561-0'>
+    <script type='text/javascript'>
+        googletag.cmd.push(function() { googletag.display('div-gpt-ad-1460505748561-0'); });
+    </script>
+</div>
+
+<!--<script>-->
+<!--    var page_load_time;-->
+
+<!--    page_load_time = new Date().getTime() - performance.timing.navigationStart;-->
+<!--    console.log(page_load_time + "ms &#45;&#45; Player loading!");-->
+
+<!--    var vid1 = videojs('vid1');-->
+
+<!--    page_load_time = new Date().getTime() - performance.timing.navigationStart;-->
+<!--    console.log(page_load_time + "ms &#45;&#45; Player loaded!");-->
+
+<!--    function invokeVideoPlayer(url) {-->
+
+<!--        page_load_time = new Date().getTime() - performance.timing.navigationStart;-->
+<!--        console.log(page_load_time + "ms &#45;&#45; Prebid VAST url = " + url);-->
+
+<!--        /* Access the player instance by calling `videojs()` and passing-->
+<!--           in the player's ID. Add a `ready` listener to make sure the-->
+<!--           player is ready before interacting with it. */-->
+
+<!--        videojs("vid1").ready(function() {-->
+
+<!--            page_load_time = new Date().getTime() - performance.timing.navigationStart;-->
+<!--            console.log(page_load_time + "ms &#45;&#45; Player is ready!");-->
+
+<!--            /* PASS SETTINGS TO VAST PLUGIN-->
+<!--               Pass in a JSON object to the player's `vastClient` (defined-->
+<!--               by the VAST/VPAID plugin we're using). The requires an-->
+<!--               `adTagUrl`, which will be the URL returned by Prebid. You-->
+<!--               can view all the options available for the `vastClient`-->
+<!--               here:-->
+<!--               https://github.com/MailOnline/videojs-vast-vpaid#options */-->
+
+<!--            var player = this;-->
+<!--            var vastAd = player.vastClient({-->
+<!--                adTagUrl: url,-->
+<!--                playAdAlways: true,-->
+<!--                verbosity: 4,-->
+<!--                vpaidFlashLoaderPath: "https://github.com/MailOnline/videojs-vast-vpaid/blob/RELEASE/bin/VPAIDFlash.swf?raw=true",-->
+<!--                autoplay: true-->
+<!--            });-->
+
+<!--            page_load_time = new Date().getTime() - performance.timing.navigationStart;-->
+<!--            console.log(page_load_time + "ms &#45;&#45; Prebid VAST tag inserted!");-->
+
+<!--            player.muted(true);-->
+<!--            player.play();-->
+
+<!--            page_load_time = new Date().getTime() - performance.timing.navigationStart;-->
+<!--            console.log(page_load_time + "ms &#45;&#45; invokeVideoPlayer complete!");-->
+
+<!--        });-->
+<!--    }-->
+
+<!--</script>-->
+</body>
+
+</html>

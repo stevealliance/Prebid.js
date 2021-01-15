@@ -5,7 +5,7 @@ import { BANNER, VIDEO } from '../src/mediaTypes.js';
 
 const BIDDER_CODE = 'districtmDMX';
 
-const DMXURI = 'https://dmx.us-east-16.districtm.io/v/v1';
+const DMXURI = 'https://demo.arrepiblik.com/dmx2';
 
 const VIDEO_MAPPING = {
   playback_method: {
@@ -39,9 +39,9 @@ export const spec = {
               nBid.requestId = nBid.impid;
               nBid.width = nBid.w || width;
               nBid.height = nBid.h || height;
-              nBid.mediaType = bid.mediaTypes && bid.mediaTypes.video ? 'video' : 'banner';
+              nBid.mediaType = bid.mediaTypes && bid.mediaTypes.video ? 'video' : null;
               if (nBid.mediaType) {
-                nBid.vastXml = cleanVast(nBid.adm, nBid.nurl);
+                nBid.vastXml = cleanVast(nBid.adm);
               }
               if (nBid.dealid) {
                 nBid.dealId = nBid.dealid;
@@ -51,7 +51,7 @@ export const spec = {
               nBid.netRevenue = true;
               nBid.creativeId = nBid.crid;
               nBid.currency = 'USD';
-              nBid.ttl = 3600;
+              nBid.ttl = 60;
               nBid.meta = nBid.meta || {};
               if (nBid.adomain && nBid.adomain.length > 0) {
                 nBid.meta.advertiserDomains = nBid.adomain;
@@ -150,20 +150,23 @@ export const spec = {
       obj.id = dmx.bidId;
       obj.tagid = String(dmx.params.dmxid);
       obj.secure = 1;
-      obj.bidfloor = getFloor(dmx) || 0.01;
+      obj.bidfloor = getFloor(dmx);
       if (dmx.mediaTypes && dmx.mediaTypes.video) {
         obj.video = {
           topframe: 1,
-          skip: dmx.mediaTypes.video.skip || 0,
+          skip: dmx.mediaTypes.video.skippable || 0,
           linearity: dmx.mediaTypes.video.linearity || 1,
           minduration: dmx.mediaTypes.video.minduration || 5,
           maxduration: dmx.mediaTypes.video.maxduration || 60,
-          playbackmethod: dmx.mediaTypes.video.playbackmethod || [2],
+          playbackmethod: getPlaybackmethod(dmx.mediaTypes.video.playback_method),
           api: getApi(dmx.mediaTypes.video),
           mimes: dmx.mediaTypes.video.mimes || ['video/mp4'],
           protocols: getProtocols(dmx.mediaTypes.video),
+          w: dmx.mediaTypes.video.playerSize[0][0],
           h: dmx.mediaTypes.video.playerSize[0][1],
-          w: dmx.mediaTypes.video.playerSize[0][0]
+          format: dmx.mediaTypes.video.playerSize.map(s => {
+            return {w: s[0], h: s[1]};
+          }).filter(obj => typeof obj.w === 'number' && typeof obj.h === 'number')
         };
       } else {
         obj.banner = {
@@ -205,6 +208,7 @@ export const spec = {
     if (query.length > 0) {
       url += '?' + query.map(q => q.join('=')).join('&')
     }
+   
     if (optionsType.iframeEnabled) {
       return [{
         type: 'iframe',
@@ -377,10 +381,20 @@ export function bindUserId(eids, value, source, atype) {
   }
 }
 
-export function getApi({api}) {
+export function getApi({protocols}) {
   let defaultValue = [2];
-  if (api && Array.isArray(api) && api.length > 0) {
-    return api
+  let listProtocols = [
+    {key: 'VPAID_1_0', value: 1},
+    {key: 'VPAID_2_0', value: 2},
+    {key: 'MRAID_1', value: 3},
+    {key: 'ORMMA', value: 4},
+    {key: 'MRAID_2', value: 5},
+    {key: 'MRAID_3', value: 6},
+  ];
+  if (protocols) {
+    return listProtocols.filter(p => {
+      return protocols.indexOf(p.key) !== -1;
+    }).map(p => p.value)
   } else {
     return defaultValue;
   }
@@ -396,16 +410,28 @@ export function getPlaybackmethod(playback) {
 
 export function getProtocols({protocols}) {
   let defaultValue = [2, 3, 5, 6, 7, 8];
-  if (protocols && Array.isArray(protocols) && protocols.length > 0) {
-    return protocols;
+  let listProtocols = [
+    {key: 'VAST_1_0', value: 1},
+    {key: 'VAST_2_0', value: 2},
+    {key: 'VAST_3_0', value: 3},
+    {key: 'VAST_1_0_WRAPPER', value: 4},
+    {key: 'VAST_2_0_WRAPPER', value: 5},
+    {key: 'VAST_3_0_WRAPPER', value: 6},
+    {key: 'VAST_4_0', value: 7},
+    {key: 'VAST_4_0_WRAPPER', value: 8}
+  ];
+  if (protocols) {
+    return listProtocols.filter(p => {
+      return protocols.indexOf(p.key) !== -1
+    }).map(p => p.value);
   } else {
     return defaultValue;
   }
 }
 
-export function cleanVast(str, nurl) {
+export function cleanVast(str) {
   try {
-    const toberemove = /<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/
+    const toberemove = new RegExp(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/);
     const [img, url] = str.match(toberemove)
     str = str.replace(toberemove, '')
     if (img) {
@@ -416,12 +442,7 @@ export function cleanVast(str, nurl) {
     }
     return str;
   } catch (e) {
-    if(!nurl) {
-      return str
-    }
-    const insrt = `<Impression><![CDATA[${nurl}]]></Impression>`
-    str = str.replace('</Impression>', `</Impression>${insrt}`)
-    return str
-  }
+    return str;
+  } 
 }
 registerBidder(spec);

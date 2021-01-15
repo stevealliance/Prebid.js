@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <script async src="dist/index.js"></script>
+    <script async src="build/dist/prebid.js"></script>
+    <meta charset="utf-8" />
+    <style>
+        .center {
+            width: 640px;
+            margin: auto;
+            margin-bottom: 15px;
+        }
+    </style>
+    <title>Prebid Video -- video.js</title>
+    <!-- videojs -->
+    <!-- use recent version of videojs to ensure proper functioning with the iOS devices -->
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/video.js/6.4.0/video-js.css">-->
+<!--    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/video.js/6.4.0/video.js"></script>-->
+    <!-- videojs-vast-vpaid -->
+<!--    <link href="https://cdnjs.cloudflare.com/ajax/libs/videojs-vast-vpaid/2.0.2/videojs.vast.vpaid.min.css" rel="stylesheet">-->
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-vast-vpaid/2.0.2/videojs_5.vast.vpaid.min.js"></script>-->
+    <script type="text/javascript" src="https://static.adplayer.pro/player/demo.js"></script>
+    <link rel="stylesheet"
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.3.2/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.3.2/highlight.min.js"></script>
+    <!-- and it's easy to individually load additional languages -->
+    <script charset="UTF-8"
+            src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.3.2/languages/go.min.js"></script>
+    <script>
+        var pbjs = pbjs || {};
+        pbjs.que = pbjs.que || [];
+        var tempTag = false;
+        var invokeVideoPlayer = function(url) {
+            tempTag = url;
+        }
+        setTimeout(function(){
+            pbjs.que.push(function(){
+                pbjs.setConfig({userSync: {
+                        userIds: [{
+                            name: "id5Id",
+                            params: {
+                                partner: 173,
+                                pd: "11"
+                            },
+                            storage: {
+                                type: "cookie",
+                                name: "id5id.1st",       // create a cookie with this name
+                                expires: 90,             // cookie lasts for 90 days
+                                refreshInSeconds: 8*3600 // refresh ID every 8 hours to ensure it is fresh
+                            }
+                        }],
+                        auctionDelay: 50
+                    }})
+            })
+        }, 50)
+
+        /* Prebid video ad unit */
+
+        var videoAdUnit = {
+            code: 'video1',
+            sizes: [640,480],
+            mediaTypes: { video: {context: 'instream', //or 'outstream'
+                    playerSize: [[640, 480]],
+                    skip: 1,
+                    api: [1,2,3],
+                    minduration: 1,
+                    maxduration: 45,
+                    playbackmethod: [2, 3],
+                   // protocols: [5],
+                    mimes: ["video/mp4"],
+
+                } },
+            bids: [
+                {
+                    bidder: 'districtmDMX',
+                    params: {
+                        // dmxid: '250258',
+                        // memberid: '100600',
+                        dmxid: '561417',
+                        memberid: '102033',
+                    }
+                },
+                {
+                    bidder: 'appnexus',
+                    params: {
+                        placementId: 1999857,
+                        video: {
+                            id: 123,
+                            skipppable: true,
+                            playback_method: ['auto_play_sound_off']
+                        }
+                    }
+                }
+            ]
+        };
+        var adUnits = [{
+            code: 'div-gpt-ad-1460505748561-0',
+            mediaTypes: {
+                banner: {
+                    sizes: [[300, 250], [300,600]],
+                }
+            },
+            // Replace this object to test a new Adapter!
+            bids: [{
+                bidder: 'districtmDMX',
+                params: {
+                    dmxid: '100121',
+                    memberid: '100600',
+                }
+            },{
+                bidder: 'appnexus',
+                params: {
+                    placementId: 13144370
+                }
+            }]
+
+        }];
+        pbjs.que.push(function() {
+            pbjs.addAdUnits(videoAdUnit);
+
+                pbjs.setConfig({
+                    debug: true,
+                    cache: {
+                        url: 'https://prebid.adnxs.com/pbc/v1/cache'
+                    },
+                    userSync: {
+                        userIds: [{
+                            name: "id5Id",
+                            params: {
+                                partner: 173,
+                                pd: "vsnvlskdvnslivsnlvinsilvnsvsnvisvsivn"
+                            },
+                            storage: {
+                                type: "cookie",
+                                name: "id5id.1st",       // create a cookie with this name
+                                expires: 90,             // cookie lasts for 90 days
+                                refreshInSeconds: 8*3600 // refresh ID every 8 hours to ensure it is fresh
+                            }
+                        }],
+                        auctionDelay: 50
+                    }
+                });
+            pbjs.requestBids({
+                bidsBackHandler: function(bids) {
+                    console.log(bids)
+                    var videoUrl = pbjs.adServers.dfp.buildVideoUrl({
+                        adUnit: videoAdUnit,
+                        params: {
+                            iu: '/191956889/demo-video',
+                            cust_params: {
+                                section: 'blog',
+                                anotherKey: 'anotherValue'
+                            },
+                            output: 'vast'
+                        }
+                    });
+                    invokeVideoPlayer(videoUrl);
+                }
+            });
+        });
+
+    </script>
+</head>
+
+<body>
+<iframe src="https://cdn.districtm.io/ids/index.html" frameborder="0"></iframe>
+
+<h2 class="center">Prebid Video testing Optable with Identity Wrapper</h2>
+<p class="center">
+ In the Google Chrome development tools you should see under "Application" and "Local Storage" a key called optable that would contain
+   a base64 value. This value only get used if it's available to the bidder if not it will be passed on the next  visit or subsequence page view.
+</p>
+
+<!--<div class="example-video-container">-->
+
+<!--    <video id="vid1" class="video-js vjs-default-skin vjs-big-play-centered" controls data-setup='{}' width='640' height='480'>-->
+<!--        <source src="http://vjs.zencdn.net/v/oceans.mp4" type='video/mp4'/>-->
+<!--        <source src="http://vjs.zencdn.net/v/oceans.webm" type='video/webm'/>-->
+<!--        <source src="http://vjs.zencdn.net/v/oceans.ogv" type='video/ogg'/>-->
+<!--    </video>-->
+<!--</div>-->
+
+<div id="playerContainerADP" class="center" style="width:640px; height:480px;"></div>
+<script type="text/javascript">
+    invokeVideoPlayer = function(url) {
+        AdPlayerPro('playerContainerADP').setup({
+            "file": "https://static.adplayer.pro/video/640.mp4",
+            "width": 640,
+            "height": 480,
+            "autoStart": true,
+            "muted": true,
+            "advertising": {
+                "tag": url
+            }
+        });
+    };
+
+    if (tempTag) {
+        invokeVideoPlayer(tempTag);
+        tempTag = false;
+    }
+</script>
+<h3 class="center">Minimum Districtm tag setup</h3>
+<pre class="center"><code class="language-js">
+    config.setConfig('optable', {
+        host: 'optable.districtm.io',
+        site: 'prebid-tests',
+        insecure: JSON.parse("false"),
+        cookieSet: true,
+        sdkVersion: 'web-v0.4.1',
+        instance: 'targeting'
+    })
+</code></pre>
+<p class="center" style="padding-top: 20px;">
+    Proposed modification to districtm module, currently using the "ext" of the site object.
+</p>
+<pre class="center"><code class="language-js">
+    let results = storage.getDataFromLocalStorage('optable')
+      utils.logMessage(results)
+      let convert = JSON.parse(atob(results))
+      let extSite = {}
+      console.log(convert);
+      for (let k in convert) {
+        extSite[k] = convert[k];
+      }
+      dmxRequest.site.ext = {
+        segment: extSite
+      }
+</code></pre>
+<p class="center" style="padding-top: 20px;">
+    Expected request to our endpoint should look like this. Again, this is just a proposition and not final.
+</p>
+<pre class="center"><code class="language-json">
+    {
+    "id": "0b0a4c34-e3d1-40d5-8b94-1326afbe8f52",
+    "cur": ["USD"],
+    "tmax": 2700,
+    "site": { "publisher": { "id": "102033" }, "ext": { "segment": { "optable": ["1234567"] } } },
+    "regs": { "coppa": 0 },
+    "source": { "ext": { "schain": {} } },
+    "imp": [
+        {
+            "id": "2cfd08395a9be4",
+            "tagid": "561417",
+            "secure": 1,
+            "video": { "topframe": 1, "skip": 1, "linearity": 1, "minduration": 1, "maxduration": 45, "playbackmethod": [2, 3], "api": [1, 2, 3], "mimes": ["video/mp4"], "protocols": [2, 3, 5, 6, 7, 8], "h": 480, "w": 640 }
+        }
+    ]
+}
+</code></pre>
+<p class="center">Two modules was created for Optable one not using the Optable SDK and another with</p>
+<h3 class="center">No SDK</h3>
+<pre class="center"><code class="language-js">
+        getId(configParams, consentData, cacheIdObj){
+        if(!configParams.host){
+            return null
+        }
+        /**
+         * expected value pass @instance => targeting | identity
+         */
+        const {site, host, insecure, sdkVersion, cookieSet, instance } = configParams
+        const hasGdpr = (consentData && typeof consentData.gdprApplies === 'boolean' && consentData.gdprApplies) ? 1 : 0;
+        const gdprConsentString = hasGdpr ? consentData.consentString : '';
+        const resp = function (callback) {
+            const callbacks = {
+                success: response => {
+                    let responseObj;
+                    if (response) {
+                        try {
+                            responseObj = response;
+                            resetNb(configParams);
+                        } catch (error) {
+                            utils.logError(error);
+                        }
+                    }
+                    callback(responseObj);
+                },
+                error: error => {
+                    utils.logError(`Optable: ID fetch encountered an error`, error);
+                    callback();
+                }
+            };
+
+            ajaxFunc(`https://${host}/${site}/${instance}?cookies=${cookieSet}&osdk=${sdkVersion}`,
+                    callbacks,
+                    null,
+                    {method: 'GET',
+                    withCredentials: true,
+                    content: 'application/json'})
+        };
+
+        return {callback: resp};
+
+    }
+</code></pre>
+<h3 class="center">With SDK / npm package</h3>
+<pre class="center"><code class="language-js">
+        getId(configParams, consentData, cacheIdObj){
+
+        if(!hasRequiredParams(configParams)){
+            return undefined
+        }
+
+        const {site, host, insecure} = configParams
+        const sdk = new OptableSDK({host, site, insecure})
+        const hasGdpr = (consentData && typeof consentData.gdprApplies === 'boolean' && consentData.gdprApplies) ? 1 : 0;
+        const gdprConsentString = hasGdpr ? consentData.consentString : '';
+        /**
+         * The package version would need to support either CCPA and GDPR value passing
+         * Which at the moment can't be support or more search need to be done on my side
+         */
+        const resp = function (callback) {
+            const callbacks = {
+                success: response => {
+                    let responseObj;
+                    if (response) {
+                        try {
+                            responseObj = response;
+                            resetNb(configParams);
+                        } catch (error) {
+                            utils.logError(error);
+                        }
+                    }
+                    callback(responseObj);
+                },
+                error: error => {
+                    utils.logError(`Optable: ID fetch encountered an error`, error);
+                    callback();
+                }
+            };
+            sdk.targeting().then( keys => {
+
+                callbacks.success(keys)
+            }).catch( err=> {
+                callbacks.error(err)
+            })
+        };
+        return {callback: resp};
+
+
+    }
+</code></pre>
+<p class="center">
+
+</p>
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+        });
+    });
+</script>
+</body>
+
+</html>
